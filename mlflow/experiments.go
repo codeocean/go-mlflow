@@ -15,7 +15,7 @@ func (s *ExperimentService) Create(ctx context.Context, name string) (string, er
 		ExperimentID string `json:"experiment_id,omitempty"`
 	}
 
-	_, err := s.client.Do(ctx, "POST", "/experiments/create", &opts, &res)
+	_, err := s.client.Do(ctx, "POST", "/experiments/create", nil, &opts, &res)
 	if err != nil {
 		return "", err
 	}
@@ -32,7 +32,7 @@ func (s *ExperimentService) Update(ctx context.Context, id, name string) error {
 		NewName:      name,
 	}
 
-	_, err := s.client.Do(ctx, "POST", "/experiments/update", &opts, nil)
+	_, err := s.client.Do(ctx, "POST", "/experiments/update", nil, &opts, nil)
 	return err
 }
 
@@ -43,6 +43,6 @@ func (s *ExperimentService) Delete(ctx context.Context, id string) error {
 		ExperimentID: id,
 	}
 
-	_, err := s.client.Do(ctx, "POST", "/experiments/delete", &opts, nil)
+	_, err := s.client.Do(ctx, "POST", "/experiments/delete", nil, &opts, nil)
 	return err
 }

@@ -12,7 +12,7 @@ import (
 
 type Client struct {
 	client  *http.Client
-	baseURL string
+	baseURL *url.URL
 
 	common service // Reuse a single struct instead of allocating one for each service on the heap.
 
@@ -42,7 +42,7 @@ func NewClient(httpClient *http.Client, baseURL string) (*Client, error) {
 
 	c := &Client{
 		client:  &httpClient2,
-		baseURL: parsedURL.String(),
+		baseURL: parsedURL,
 	}
 
 	c.common.client = c
@@ -52,13 +52,22 @@ func NewClient(httpClient *http.Client, baseURL string) (*Client, error) {
 	return c, nil
 }
 
-func (c *Client) Do(ctx context.Context, method string, path string, body interface{}, response interface{}) (*http.Response, error) {
+func (c *Client) Do(ctx context.Context, method string, path string, params url.Values, body interface{}, response interface{}) (*http.Response, error) {
+	u, err := c.baseURL.Parse(path)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		u.RawQuery = params.Encode()
+	}
+
 	bodyReader, err := c.encodeBody(body)
 	if err != nil {
 		return nil, err
 	}
 
-	r, err := http.NewRequest(method, c.baseURL+path, bodyReader)
+	r, err := http.NewRequest(method, u.String(), bodyReader)
 	if err != nil {
 		return nil, err
 	}
