@@ -107,21 +107,3 @@ func (c *Client) encodeBody(body interface{}) (io.Reader, error) {
 
 	return bytes.NewBuffer(b), nil
 }
-
-// QueryParams defines the query parameters to be sent when calling APIs
-type QueryParams map[string]string
-
-func (m QueryParams) String() string {
-	var buffer bytes.Buffer
-
-	for key, value := range m {
-		if buffer.Len() > 0 {
-			buffer.WriteByte('&')
-		}
-		buffer.WriteString(key)
-		buffer.WriteByte('=')
-		buffer.WriteString(url.QueryEscape(value))
-	}
-
-	return buffer.String()
-}
