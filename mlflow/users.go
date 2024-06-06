@@ -7,16 +7,10 @@ import (
 
 type UserService service
 
-// User ...
 type User struct {
 	ID       int    `json:"id,omitempty"`
 	Username string `json:"username,omitempty"`
 	IsAdmin  bool   `json:"is_admin,omitempty"`
-}
-
-// UserResponse ...
-type UserResponse struct {
-	User *User `json:"user,omitempty"`
 }
 
 func (s *UserService) Create(ctx context.Context, username, password string) (*User, error) {

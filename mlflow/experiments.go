@@ -46,3 +46,18 @@ func (s *ExperimentService) Delete(ctx context.Context, id string) error {
 	_, err := s.client.Do(ctx, "POST", "/experiments/delete", nil, &opts, nil)
 	return err
 }
+
+func (s *ExperimentService) SetTag(ctx context.Context, id, key, value string) error {
+	opts := struct {
+		ExperimentID string `json:"experiment_id,omitempty"`
+		Key          string `json:"key,omitempty"`
+		Value        string `json:"value,omitempty"`
+	}{
+		ExperimentID: id,
+		Key:          key,
+		Value:        value,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "/experiments/set-experiment-tag", nil, &opts, nil)
+	return err
+}
