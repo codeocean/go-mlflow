@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -83,13 +82,6 @@ func (c *Client) Do(ctx context.Context, method string, path string, params url.
 		return res, err
 	}
 	defer res.Body.Close()
-
-	// Check the HTTP status code
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
-		// Read the response body for logging or debugging purposes
-		bodyBytes, _ := io.ReadAll(res.Body)
-		return res, fmt.Errorf("HTTP error: %s, Body: %s", res.Status, string(bodyBytes))
-	}
 
 	switch v := response.(type) {
 	case nil:
