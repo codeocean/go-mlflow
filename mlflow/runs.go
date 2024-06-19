@@ -7,14 +7,14 @@ import (
 
 type RunService service
 
-type RunStatus int32
+type RunStatus string
 
 const (
-	RunStatusRunning   RunStatus = 1
-	RunStatusScheduled RunStatus = 2
-	RunStatusFinished  RunStatus = 3
-	RunStatusFailed    RunStatus = 4
-	RunStatusKilled    RunStatus = 5
+	RunStatusRunning   RunStatus = "RUNNING"
+	RunStatusScheduled RunStatus = "SCHEDULED"
+	RunStatusFinished  RunStatus = "FINISHED"
+	RunStatusFailed    RunStatus = "FAILED"
+	RunStatusKilled    RunStatus = "KILLED"
 )
 
 type Run struct {
