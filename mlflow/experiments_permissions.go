@@ -35,7 +35,7 @@ func (s *ExperimentService) CreatePermission(ctx context.Context, id, username s
 		ExperimentPermission *ExperimentPermission `json:"experiment_permission,omitempty"`
 	}
 
-	_, err := s.client.Do(ctx, "POST", "/experiments/permissions/create", nil, &opts, &res)
+	_, err := s.client.Do(ctx, "POST", "experiments/permissions/create", nil, &opts, &res)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (s *ExperimentService) GetPermission(ctx context.Context, id, username stri
 	params.Set("experiment_id", id)
 	params.Set("username", username)
 
-	_, err := s.client.Do(ctx, "GET", "/experiments/permissions/get", params, nil, &res)
+	_, err := s.client.Do(ctx, "GET", "experiments/permissions/get", params, nil, &res)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (s *ExperimentService) UpdatePermission(ctx context.Context, id, username s
 		Permission:   permission,
 	}
 
-	_, err := s.client.Do(ctx, "POST", "/experiments/permissions/update", nil, &opts, nil)
+	_, err := s.client.Do(ctx, "POST", "experiments/permissions/update", nil, &opts, nil)
 	return err
 }
 
@@ -84,6 +84,6 @@ func (s *ExperimentService) DeletePermission(ctx context.Context, id, username s
 		Username:     username,
 	}
 
-	_, err := s.client.Do(ctx, "DELETE", "/experiments/permissions/delete", nil, &opts, nil)
+	_, err := s.client.Do(ctx, "DELETE", "experiments/permissions/delete", nil, &opts, nil)
 	return err
 }

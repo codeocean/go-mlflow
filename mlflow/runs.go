@@ -75,7 +75,7 @@ func (s *RunService) Create(ctx context.Context, experimentID, name string, tags
 		Run *Run `json:"run,omitempty"`
 	}
 
-	_, err := s.client.Do(ctx, "POST", "/runs/create", nil, &opts, &res)
+	_, err := s.client.Do(ctx, "POST", "runs/create", nil, &opts, &res)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func (s *RunService) Update(ctx context.Context, id, name string, status RunStat
 		Info *RunInfo `json:"info,omitempty"`
 	}
 
-	_, err := s.client.Do(ctx, "POST", "/runs/update", nil, &opts, &res)
+	_, err := s.client.Do(ctx, "POST", "runs/update", nil, &opts, &res)
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +118,6 @@ func (s *RunService) Delete(ctx context.Context, id string) error {
 		RunID: id,
 	}
 
-	_, err := s.client.Do(ctx, "POST", "/runs/delete", nil, &opts, nil)
+	_, err := s.client.Do(ctx, "POST", "runs/delete", nil, &opts, nil)
 	return err
 }

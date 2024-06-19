@@ -81,7 +81,7 @@ func (c *Client) Do(ctx context.Context, method string, path string, params url.
 	if err != nil {
 		return res, err
 	}
-	res.Body.Close()
+	defer res.Body.Close()
 
 	switch v := response.(type) {
 	case nil:
