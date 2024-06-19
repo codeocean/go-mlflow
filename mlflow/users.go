@@ -26,7 +26,7 @@ func (s *UserService) Create(ctx context.Context, username, password string) (*U
 		User *User `json:"user,omitempty"`
 	}
 
-	_, err := s.client.Do(ctx, "POST", "/users/create", nil, &opts, &res)
+	_, err := s.client.Do(ctx, "POST", "users/create", nil, &opts, &res)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (s *UserService) Get(ctx context.Context, username string) (*User, error) {
 	params := url.Values{}
 	params.Set("username", username)
 
-	_, err := s.client.Do(ctx, "GET", "/users/get", params, nil, &res)
+	_, err := s.client.Do(ctx, "GET", "users/get", params, nil, &res)
 	if err != nil {
 		return nil, err
 	}
