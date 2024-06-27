@@ -121,3 +121,33 @@ func (s *RunService) Delete(ctx context.Context, id string) error {
 	_, err := s.client.Do(ctx, "POST", "runs/delete", nil, &opts, nil)
 	return err
 }
+
+func (s *RunService) Restore(ctx context.Context, id string) error {
+	opts := struct {
+		RunID string `json:"run_id,omitempty"`
+	}{
+		RunID: id,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/restore", nil, &opts, nil)
+	return err
+}
+
+func (s *RunService) Get(ctx context.Context, id string) (*Run, error) {
+	opts := struct {
+		RunID string `json:"run_id,omitempty"`
+	}{
+		RunID: id,
+	}
+
+	var res struct {
+		Run *Run `json:"run,omitempty"`
+	}
+
+	_, err := s.client.Do(ctx, "GET", "runs/get", nil, &opts, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Run, nil
+}
