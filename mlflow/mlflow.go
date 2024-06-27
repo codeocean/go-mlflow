@@ -84,10 +84,12 @@ func (c *Client) Do(ctx context.Context, method string, path string, params url.
 	defer res.Body.Close()
 
 	if res.StatusCode >= 400 {
-		var e Error
+		e := Error{StatusCode: res.StatusCode}
 		err = json.NewDecoder(res.Body).Decode(&e)
 		if err != nil {
-			return res, err
+			buf := new(strings.Builder)
+			_, _ = io.Copy(buf, res.Body)
+			e.Message = buf.String()
 		}
 		return res, &e
 	}

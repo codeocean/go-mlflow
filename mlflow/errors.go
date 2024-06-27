@@ -10,8 +10,9 @@ const (
 
 // Error represents an error returned by the MLflow API.
 type Error struct {
-	ErrorCode string `json:"error_code"`
-	Message   string `json:"message"`
+	StatusCode int
+	ErrorCode  string `json:"error_code"`
+	Message    string `json:"message"`
 }
 
 // Error returns the error message.
