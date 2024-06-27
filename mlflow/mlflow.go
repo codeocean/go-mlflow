@@ -35,6 +35,7 @@ func NewClient(httpClient *http.Client, baseURL string) (*Client, error) {
 	if !strings.HasSuffix(parsedURL.Path, "/") {
 		parsedURL.Path += "/"
 	}
+	parsedURL.Path += "api/2.0/mlflow/"
 
 	if httpClient == nil {
 		httpClient = &http.Client{}
