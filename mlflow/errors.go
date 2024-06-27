@@ -1,9 +1,6 @@
 package mlflow
 
 const (
-	// ErrorUnauthorized indicates that the requester is unauthenticated or unauthorized to make the request.
-	ErrorUnauthorized = "UNAUTHORIZED"
-
 	// ErrorResourceAlreadyExists indicates that a resource with the given name already exists.
 	ErrorResourceAlreadyExists = "RESOURCE_ALREADY_EXISTS"
 
@@ -13,8 +10,9 @@ const (
 
 // Error represents an error returned by the MLflow API.
 type Error struct {
-	ErrorCode string `json:"error_code"`
-	Message   string `json:"message"`
+	StatusCode int
+	ErrorCode  string `json:"error_code"`
+	Message    string `json:"message"`
 }
 
 // Error returns the error message.
