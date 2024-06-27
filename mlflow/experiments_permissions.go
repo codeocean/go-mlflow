@@ -71,7 +71,7 @@ func (s *ExperimentService) UpdatePermission(ctx context.Context, id, username s
 		Permission:   permission,
 	}
 
-	_, err := s.client.Do(ctx, "POST", "experiments/permissions/update", nil, &opts, nil)
+	_, err := s.client.Do(ctx, "PATCH", "experiments/permissions/update", nil, &opts, nil)
 	return err
 }
 
