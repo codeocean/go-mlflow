@@ -1,6 +1,9 @@
 package mlflow
 
 const (
+	// ErrorUnauthorized indicates that the requester is unauthenticated or unauthorized to make the request.
+	ErrorUnauthorized = "UNAUTHORIZED"
+
 	// ErrorResourceAlreadyExists indicates that a resource with the given name already exists.
 	ErrorResourceAlreadyExists = "RESOURCE_ALREADY_EXISTS"
 

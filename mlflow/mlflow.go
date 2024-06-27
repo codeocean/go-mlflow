@@ -83,23 +83,33 @@ func (c *Client) Do(ctx context.Context, method string, path string, params url.
 	}
 	defer res.Body.Close()
 
-	if res.StatusCode >= 400 {
+	switch {
+	case res.StatusCode == http.StatusUnauthorized:
+		buf := new(strings.Builder)
+		_, err = io.Copy(buf, res.Body)
+		if err != nil {
+			return res, err
+		}
+		err = &Error{ErrorCode: ErrorUnauthorized, Message: buf.String()}
+
+	case res.StatusCode >= 400:
 		var e Error
 		err = json.NewDecoder(res.Body).Decode(&e)
 		if err != nil {
 			return res, err
 		}
-		return res, &e
-	}
+		err = &e
 
-	switch v := response.(type) {
-	case nil:
-	case io.Writer:
-		_, err = io.Copy(v, res.Body)
 	default:
-		err = json.NewDecoder(res.Body).Decode(v)
-		if err == io.EOF {
-			err = nil // ignore EOF errors caused by empty response body
+		switch v := response.(type) {
+		case nil:
+		case io.Writer:
+			_, err = io.Copy(v, res.Body)
+		default:
+			err = json.NewDecoder(res.Body).Decode(v)
+			if err == io.EOF {
+				err = nil // ignore EOF errors caused by empty response body
+			}
 		}
 	}
 
