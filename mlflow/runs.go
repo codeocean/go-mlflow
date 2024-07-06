@@ -17,6 +17,14 @@ const (
 	RunStatusKilled    RunStatus = "KILLED"
 )
 
+type ViewType string
+
+const (
+	ViewTypeActiveOnly  ViewType = "ACTIVE_ONLY"
+	ViewTypeDeletedOnly ViewType = "DELETED_ONLY"
+	ViewTypeAll         ViewType = "ALL"
+)
+
 type Run struct {
 	Info *RunInfo `json:"info,omitempty"`
 	Data *RunData `json:"data,omitempty"`
@@ -53,6 +61,20 @@ type Param struct {
 type RunTag struct {
 	Key   string `json:"key,omitempty"`
 	Value string `json:"value,omitempty"`
+}
+
+type SearchOptions struct {
+	ExperimentIDs []string `json:"experiment_ids,omitempty"`
+	Filter        string   `json:"filter,omitempty"`
+	RunViewType   ViewType `json:"run_view_type,omitempty"`
+	MaxResults    int32    `json:"max_results,omitempty"`
+	OrderBy       []string `json:"order_by,omitempty"`
+	PageToken     string   `json:"page_token,omitempty"`
+}
+
+type SearchResults struct {
+	Runs      []*Run `json:"runs,omitempty"`
+	NextToken string `json:"next_token,omitempty"`
 }
 
 func (s *RunService) Create(ctx context.Context, experimentID, name string, tags map[string]string) (*Run, error) {
@@ -150,4 +172,16 @@ func (s *RunService) Get(ctx context.Context, id string) (*Run, error) {
 	}
 
 	return res.Run, nil
+}
+
+func (s *RunService) Search(ctx context.Context, opts *SearchOptions) (*SearchResults, error) {
+
+	var res SearchResults
+
+	_, err := s.client.Do(ctx, "POST", "runs/search", nil, opts, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	return &res, nil
 }
