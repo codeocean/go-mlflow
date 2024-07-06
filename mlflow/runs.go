@@ -63,7 +63,7 @@ type RunTag struct {
 	Value string `json:"value,omitempty"`
 }
 
-type SearchOptions struct {
+type RunSearchOptions struct {
 	ExperimentIDs []string `json:"experiment_ids,omitempty"`
 	Filter        string   `json:"filter,omitempty"`
 	RunViewType   ViewType `json:"run_view_type,omitempty"`
@@ -72,7 +72,7 @@ type SearchOptions struct {
 	PageToken     string   `json:"page_token,omitempty"`
 }
 
-type SearchResults struct {
+type RunSearchResults struct {
 	Runs      []*Run `json:"runs,omitempty"`
 	NextToken string `json:"next_token,omitempty"`
 }
@@ -174,9 +174,9 @@ func (s *RunService) Get(ctx context.Context, id string) (*Run, error) {
 	return res.Run, nil
 }
 
-func (s *RunService) Search(ctx context.Context, opts *SearchOptions) (*SearchResults, error) {
+func (s *RunService) Search(ctx context.Context, opts *RunSearchOptions) (*RunSearchResults, error) {
 
-	var res SearchResults
+	var res RunSearchResults
 
 	_, err := s.client.Do(ctx, "POST", "runs/search", nil, opts, &res)
 	if err != nil {
