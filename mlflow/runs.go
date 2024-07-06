@@ -155,6 +155,34 @@ func (s *RunService) Restore(ctx context.Context, id string) error {
 	return err
 }
 
+func (s *RunService) SetTag(ctx context.Context, id, key, value string) error {
+	opts := struct {
+		RunID string `json:"run_id,omitempty"`
+		Key   string `json:"key,omitempty"`
+		Value string `json:"value,omitempty"`
+	}{
+		RunID: id,
+		Key:   key,
+		Value: value,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/set-tag", nil, &opts, nil)
+	return err
+}
+
+func (s *RunService) DeleteTag(ctx context.Context, id, key string) error {
+	opts := struct {
+		RunID string `json:"run_id,omitempty"`
+		Key   string `json:"key,omitempty"`
+	}{
+		RunID: id,
+		Key:   key,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/delete-tag", nil, &opts, nil)
+	return err
+}
+
 func (s *RunService) Get(ctx context.Context, id string) (*Run, error) {
 	opts := struct {
 		RunID string `json:"run_id,omitempty"`
@@ -175,7 +203,6 @@ func (s *RunService) Get(ctx context.Context, id string) (*Run, error) {
 }
 
 func (s *RunService) Search(ctx context.Context, opts *RunSearchOptions) (*RunSearchResults, error) {
-
 	var res RunSearchResults
 
 	_, err := s.client.Do(ctx, "POST", "runs/search", nil, opts, &res)
