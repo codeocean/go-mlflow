@@ -17,6 +17,7 @@ type Client struct {
 	common service // Reuse a single struct instead of allocating one for each service on the heap.
 
 	// Services used for talking to different parts of the MLflow API.
+	Artifacts   *ArtifactsService
 	Experiments *ExperimentService
 	Runs        *RunService
 	Users       *UserService
@@ -48,6 +49,7 @@ func NewClient(httpClient *http.Client, baseURL string) (*Client, error) {
 	}
 
 	c.common.client = c
+	c.Artifacts = (*ArtifactsService)(&c.common)
 	c.Experiments = (*ExperimentService)(&c.common)
 	c.Runs = (*RunService)(&c.common)
 	c.Users = (*UserService)(&c.common)

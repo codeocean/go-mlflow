@@ -17,6 +17,14 @@ const (
 	RunStatusKilled    RunStatus = "KILLED"
 )
 
+type ViewType string
+
+const (
+	ViewTypeActiveOnly  ViewType = "ACTIVE_ONLY"
+	ViewTypeDeletedOnly ViewType = "DELETED_ONLY"
+	ViewTypeAll         ViewType = "ALL"
+)
+
 type Run struct {
 	Info *RunInfo `json:"info,omitempty"`
 	Data *RunData `json:"data,omitempty"`
@@ -53,6 +61,20 @@ type Param struct {
 type RunTag struct {
 	Key   string `json:"key,omitempty"`
 	Value string `json:"value,omitempty"`
+}
+
+type RunSearchOptions struct {
+	ExperimentIDs []string `json:"experiment_ids,omitempty"`
+	Filter        string   `json:"filter,omitempty"`
+	RunViewType   ViewType `json:"run_view_type,omitempty"`
+	MaxResults    int32    `json:"max_results,omitempty"`
+	OrderBy       []string `json:"order_by,omitempty"`
+	PageToken     string   `json:"page_token,omitempty"`
+}
+
+type RunSearchResults struct {
+	Runs      []*Run `json:"runs,omitempty"`
+	NextToken string `json:"next_token,omitempty"`
 }
 
 func (s *RunService) Create(ctx context.Context, experimentID, name string, tags map[string]string) (*Run, error) {
@@ -133,6 +155,34 @@ func (s *RunService) Restore(ctx context.Context, id string) error {
 	return err
 }
 
+func (s *RunService) SetTag(ctx context.Context, id, key, value string) error {
+	opts := struct {
+		RunID string `json:"run_id,omitempty"`
+		Key   string `json:"key,omitempty"`
+		Value string `json:"value,omitempty"`
+	}{
+		RunID: id,
+		Key:   key,
+		Value: value,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/set-tag", nil, &opts, nil)
+	return err
+}
+
+func (s *RunService) DeleteTag(ctx context.Context, id, key string) error {
+	opts := struct {
+		RunID string `json:"run_id,omitempty"`
+		Key   string `json:"key,omitempty"`
+	}{
+		RunID: id,
+		Key:   key,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/delete-tag", nil, &opts, nil)
+	return err
+}
+
 func (s *RunService) Get(ctx context.Context, id string) (*Run, error) {
 	opts := struct {
 		RunID string `json:"run_id,omitempty"`
@@ -150,4 +200,15 @@ func (s *RunService) Get(ctx context.Context, id string) (*Run, error) {
 	}
 
 	return res.Run, nil
+}
+
+func (s *RunService) Search(ctx context.Context, opts *RunSearchOptions) (*RunSearchResults, error) {
+	var res RunSearchResults
+
+	_, err := s.client.Do(ctx, "POST", "runs/search", nil, opts, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	return &res, nil
 }
