@@ -32,6 +32,7 @@ type Run struct {
 
 type RunInfo struct {
 	RunID          string    `json:"run_id,omitempty"`
+	RunName        string    `json:"run_name,omitempty"`
 	ExperimentID   string    `json:"experiment_id,omitempty"`
 	Status         RunStatus `json:"status,omitempty"`
 	StartTime      int64     `json:"start_time,omitempty"`
