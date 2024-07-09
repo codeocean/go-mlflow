@@ -78,7 +78,7 @@ type RunSearchResults struct {
 	NextToken string `json:"next_token,omitempty"`
 }
 
-func (s *RunService) Create(ctx context.Context, experimentID, name string, tags map[string]string) (*Run, error) {
+func (s *RunService) Create(ctx context.Context, experimentID, name string, startTime int64, tags map[string]string) (*Run, error) {
 	opts := struct {
 		ExperimentID string    `json:"experiment_id,omitempty"`
 		RunName      string    `json:"run_name,omitempty"`
@@ -87,7 +87,11 @@ func (s *RunService) Create(ctx context.Context, experimentID, name string, tags
 	}{
 		ExperimentID: experimentID,
 		RunName:      name,
-		StartTime:    time.Now().UnixMilli(),
+		StartTime:    startTime,
+	}
+
+	if startTime == 0 {
+		opts.StartTime = time.Now().UnixMilli()
 	}
 
 	for key, value := range tags {
@@ -106,7 +110,7 @@ func (s *RunService) Create(ctx context.Context, experimentID, name string, tags
 	return res.Run, nil
 }
 
-func (s *RunService) Update(ctx context.Context, id, name string, status RunStatus) (*RunInfo, error) {
+func (s *RunService) Update(ctx context.Context, id, name string, status RunStatus, endTime int64) (*RunInfo, error) {
 	opts := struct {
 		RunID   string    `json:"run_id,omitempty"`
 		RunName string    `json:"run_name,omitempty"`
@@ -116,10 +120,13 @@ func (s *RunService) Update(ctx context.Context, id, name string, status RunStat
 		RunID:   id,
 		RunName: name,
 		Status:  status,
+		EndTime: endTime,
 	}
 
-	if status == RunStatusFinished || status == RunStatusFailed || status == RunStatusKilled {
-		opts.EndTime = time.Now().UnixMilli()
+	if endTime == 0 {
+		if status == RunStatusFinished || status == RunStatusFailed || status == RunStatusKilled {
+			opts.EndTime = time.Now().UnixMilli()
+		}
 	}
 
 	var res struct {
