@@ -1,6 +1,6 @@
 # go-mlflow
 
-go-mlflow is a Go client libraary for the [MLflow API](https://mlflow.org/docs/latest/rest-api.html), including user & permission management as described in the [MLFlow Authentication API](https://mlflow.org/docs/latest/auth/rest-api.html).
+go-mlflow is a Go client library for the [MLflow API](https://mlflow.org/docs/latest/rest-api.html), including user & permission management as described in the [MLFlow Authentication API](https://mlflow.org/docs/latest/auth/rest-api.html).
 
 Currently, most APIs are covered, missing mainly registered models APIs.
 
@@ -40,4 +40,4 @@ experiment, err := client.Experiments.Get(context.Background(), "1")
 
 The services of a client divide the API into logical chunks and correspond to the structure of the MLflow API documentation at https://mlflow.org/docs/latest/rest-api.html .
 
-NOTE: Using the context package, one can easily pass cancelation signals and deadlines to various services of the client for handling a request. In case there is no context available, then context.Background() can be used as a starting point.
+NOTE: Using the context package, one can easily pass cancellation signals and deadlines to various services of the client for handling a request. In case there is no context available, then context.Background() can be used as a starting point.
