@@ -26,8 +26,9 @@ const (
 )
 
 type Run struct {
-	Info *RunInfo `json:"info,omitempty"`
-	Data *RunData `json:"data,omitempty"`
+	Info   *RunInfo   `json:"info,omitempty"`
+	Data   *RunData   `json:"data,omitempty"`
+	Inputs *RunInputs `json:"inputs,omitempty"`
 }
 
 type RunInfo struct {
@@ -62,6 +63,29 @@ type Param struct {
 type RunTag struct {
 	Key   string `json:"key,omitempty"`
 	Value string `json:"value,omitempty"`
+}
+
+type RunInputs struct {
+	DatasetInputs []*DatasetInput `json:"dataset_inputs,omitempty"`
+}
+
+type DatasetInput struct {
+	Tags    []*InputTag `json:"tags,omitempty"`
+	Dataset *Dataset    `json:"dataset,omitempty"`
+}
+
+type InputTag struct {
+	Key   string `json:"key,omitempty"`
+	Value string `json:"value,omitempty"`
+}
+
+type Dataset struct {
+	Name       string `json:"name,omitempty"`
+	Digest     string `json:"digest,omitempty"`
+	SourceType string `json:"source_type,omitempty"`
+	Source     string `json:"source,omitempty"`
+	Schema     string `json:"schema,omitempty"`
+	Profile    string `json:"profile,omitempty"`
 }
 
 type RunSearchOptions struct {
@@ -163,34 +187,6 @@ func (s *RunService) Restore(ctx context.Context, id string) error {
 	return err
 }
 
-func (s *RunService) SetTag(ctx context.Context, id, key, value string) error {
-	opts := struct {
-		RunID string `json:"run_id,omitempty"`
-		Key   string `json:"key,omitempty"`
-		Value string `json:"value,omitempty"`
-	}{
-		RunID: id,
-		Key:   key,
-		Value: value,
-	}
-
-	_, err := s.client.Do(ctx, "POST", "runs/set-tag", nil, &opts, nil)
-	return err
-}
-
-func (s *RunService) DeleteTag(ctx context.Context, id, key string) error {
-	opts := struct {
-		RunID string `json:"run_id,omitempty"`
-		Key   string `json:"key,omitempty"`
-	}{
-		RunID: id,
-		Key:   key,
-	}
-
-	_, err := s.client.Do(ctx, "POST", "runs/delete-tag", nil, &opts, nil)
-	return err
-}
-
 func (s *RunService) Get(ctx context.Context, id string) (*Run, error) {
 	opts := struct {
 		RunID string `json:"run_id,omitempty"`
@@ -219,4 +215,92 @@ func (s *RunService) Search(ctx context.Context, opts *RunSearchOptions) (*RunSe
 	}
 
 	return &res, nil
+}
+
+func (s *RunService) SetTag(ctx context.Context, id, key, value string) error {
+	opts := struct {
+		RunID string `json:"run_id,omitempty"`
+		Key   string `json:"key,omitempty"`
+		Value string `json:"value,omitempty"`
+	}{
+		RunID: id,
+		Key:   key,
+		Value: value,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/set-tag", nil, &opts, nil)
+	return err
+}
+
+func (s *RunService) DeleteTag(ctx context.Context, id, key string) error {
+	opts := struct {
+		RunID string `json:"run_id,omitempty"`
+		Key   string `json:"key,omitempty"`
+	}{
+		RunID: id,
+		Key:   key,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/delete-tag", nil, &opts, nil)
+	return err
+}
+
+func (s *RunService) LogMetric(ctx context.Context, id, key string, value float64, timestamp int64, step int64) error {
+	opts := struct {
+		RunID     string  `json:"run_id,omitempty"`
+		Key       string  `json:"key,omitempty"`
+		Value     float64 `json:"value,omitempty"`
+		Timestamp int64   `json:"timestamp,omitempty"`
+		Step      int64   `json:"step,omitempty"`
+	}{
+		RunID:     id,
+		Key:       key,
+		Value:     value,
+		Timestamp: timestamp,
+		Step:      step,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/log-metric", nil, &opts, nil)
+	return err
+}
+
+func (s *RunService) LogParam(ctx context.Context, id, key, value string) error {
+	opts := struct {
+		RunID string `json:"run_id,omitempty"`
+		Key   string `json:"key,omitempty"`
+		Value string `json:"value,omitempty"`
+	}{
+		RunID: id,
+		Key:   key,
+		Value: value,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/log-parameter", nil, &opts, nil)
+	return err
+}
+
+func (s *RunService) LogBatch(ctx *context.Context, id string, data *RunData) error {
+	opts := struct {
+		RunID string `json:"run_id,omitempty"`
+		*RunData
+	}{
+		RunID:   id,
+		RunData: data,
+	}
+
+	_, err := s.client.Do(*ctx, "POST", "runs/log-batch", nil, &opts, nil)
+	return err
+}
+
+func (s *RunService) LogInputs(ctx context.Context, id string, datasets []*DatasetInput) error {
+	opts := struct {
+		RunID    string          `json:"run_id,omitempty"`
+		Datasets []*DatasetInput `json:"datasets,omitempty"`
+	}{
+		RunID:    id,
+		Datasets: datasets,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/log-inputs", nil, &opts, nil)
+	return err
 }
