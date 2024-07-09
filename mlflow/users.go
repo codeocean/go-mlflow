@@ -49,3 +49,14 @@ func (s *UserService) Get(ctx context.Context, username string) (*User, error) {
 
 	return res.User, nil
 }
+
+func (s *UserService) Delete(ctx context.Context, username string) error {
+	opts := struct {
+		Username string `json:"username,omitempty"`
+	}{
+		Username: username,
+	}
+
+	_, err := s.client.Do(ctx, "DELETE", "users/delete", nil, &opts, nil)
+	return err
+}
