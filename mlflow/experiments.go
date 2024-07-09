@@ -28,8 +28,8 @@ type ExperimentsSearchOptions struct {
 }
 
 type ExperimentsSearchResults struct {
-	Runs      []*Run `json:"runs,omitempty"`
-	NextToken string `json:"next_token,omitempty"`
+	Experiment []*Experiment `json:"experiments,omitempty"`
+	NextToken  string        `json:"next_page_token,omitempty"`
 }
 
 func (s *ExperimentService) Create(ctx context.Context, name string) (string, error) {

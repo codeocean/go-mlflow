@@ -13,7 +13,7 @@ type MetricHistoryOptions struct {
 
 type MetricHistory struct {
 	Metrics   []*Metric `json:"metrics,omitempty"`
-	PageToken string    `json:"next_page_token,omitempty"`
+	NextToken string    `json:"next_page_token,omitempty"`
 }
 
 func (s *MetricsService) GetHistory(ctx context.Context, opts *MetricHistoryOptions) (*MetricHistory, error) {
