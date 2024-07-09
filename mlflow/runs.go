@@ -98,8 +98,8 @@ type RunSearchOptions struct {
 }
 
 type RunSearchResults struct {
-	Runs      []*Run `json:"runs,omitempty"`
-	NextToken string `json:"next_page_token,omitempty"`
+	Runs          []*Run `json:"runs,omitempty"`
+	NextPageToken string `json:"next_page_token,omitempty"`
 }
 
 func (s *RunService) Create(ctx context.Context, experimentID, name string, startTime int64, tags map[string]string) (*Run, error) {

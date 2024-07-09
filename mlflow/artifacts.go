@@ -11,9 +11,9 @@ type ListArtifactsRequest struct {
 }
 
 type ListArtifactsResponse struct {
-	RootURI   string      `json:"root_uri,omitempty"`
-	Files     []*FileInfo `json:"files,omitempty"`
-	NextToken string      `json:"next_page_token,omitempty"`
+	RootURI       string      `json:"root_uri,omitempty"`
+	Files         []*FileInfo `json:"files,omitempty"`
+	NextPageToken string      `json:"next_page_token,omitempty"`
 }
 
 type FileInfo struct {
