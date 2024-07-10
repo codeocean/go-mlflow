@@ -279,7 +279,7 @@ func (s *RunService) LogParam(ctx context.Context, id, key, value string) error 
 	return err
 }
 
-func (s *RunService) LogBatch(ctx *context.Context, id string, data *RunData) error {
+func (s *RunService) LogBatch(ctx context.Context, id string, data *RunData) error {
 	opts := struct {
 		RunID string `json:"run_id,omitempty"`
 		*RunData
@@ -288,7 +288,7 @@ func (s *RunService) LogBatch(ctx *context.Context, id string, data *RunData) er
 		RunData: data,
 	}
 
-	_, err := s.client.Do(*ctx, "POST", "runs/log-batch", nil, &opts, nil)
+	_, err := s.client.Do(ctx, "POST", "runs/log-batch", nil, &opts, nil)
 	return err
 }
 
