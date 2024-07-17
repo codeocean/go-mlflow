@@ -20,6 +20,7 @@ type Client struct {
 	Artifacts   *ArtifactsService
 	Experiments *ExperimentService
 	Metrics     *MetricsService
+	Models      *ModelService
 	Runs        *RunService
 	Users       *UserService
 }
@@ -53,6 +54,7 @@ func NewClient(httpClient *http.Client, baseURL string) (*Client, error) {
 	c.Artifacts = (*ArtifactsService)(&c.common)
 	c.Experiments = (*ExperimentService)(&c.common)
 	c.Metrics = (*MetricsService)(&c.common)
+	c.Models = (*ModelService)(&c.common)
 	c.Runs = (*RunService)(&c.common)
 	c.Users = (*UserService)(&c.common)
 

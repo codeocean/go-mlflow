@@ -1,5 +1,12 @@
 package mlflow
 
+import (
+	"context"
+	"strconv"
+)
+
+type ModelService service
+
 type ModelVersionStatus string
 
 const (
@@ -28,4 +35,21 @@ type ModelVersion struct {
 type ModelVersionTag struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
+}
+
+func (s *ModelService) SetTag(ctx context.Context, name, key, value string, version int) error {
+	opts := struct {
+		Name    string `json:"name,omitempty"`
+		Version string `json:"version,omitempty"`
+		Key     string `json:"key,omitempty"`
+		Value   string `json:"value,omitempty"`
+	}{
+		Name:    name,
+		Version: strconv.Itoa(version),
+		Key:     key,
+		Value:   value,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "model-versions/set-tag", nil, &opts, nil)
+	return err
 }
