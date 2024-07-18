@@ -37,7 +37,7 @@ type ModelVersionTag struct {
 	Value string `json:"value"`
 }
 
-func (s *ModelService) SetTag(ctx context.Context, name, key, value string, version int) error {
+func (s *ModelService) SetTag(ctx context.Context, name string, version int, key, value string) error {
 	opts := struct {
 		Name    string `json:"name,omitempty"`
 		Version string `json:"version,omitempty"`
