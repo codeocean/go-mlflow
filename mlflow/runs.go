@@ -2,6 +2,7 @@ package mlflow
 
 import (
 	"context"
+	"net/url"
 	"time"
 )
 
@@ -188,17 +189,14 @@ func (s *RunService) Restore(ctx context.Context, id string) error {
 }
 
 func (s *RunService) Get(ctx context.Context, id string) (*Run, error) {
-	opts := struct {
-		RunID string `json:"run_id,omitempty"`
-	}{
-		RunID: id,
-	}
-
 	var res struct {
 		Run *Run `json:"run,omitempty"`
 	}
 
-	_, err := s.client.Do(ctx, "GET", "runs/get", nil, &opts, &res)
+	params := url.Values{}
+	params.Set("run_id", id)
+
+	_, err := s.client.Do(ctx, "GET", "runs/get", params, nil, &res)
 	if err != nil {
 		return nil, err
 	}

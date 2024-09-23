@@ -1,6 +1,9 @@
 package mlflow
 
-import "context"
+import (
+	"context"
+	"net/url"
+)
 
 type ExperimentService service
 
@@ -102,17 +105,14 @@ func (s *ExperimentService) SetTag(ctx context.Context, id, key, value string) e
 }
 
 func (s *ExperimentService) Get(ctx context.Context, id string) (*Experiment, error) {
-	opts := struct {
-		ExperimentID string `json:"experiment_id,omitempty"`
-	}{
-		ExperimentID: id,
-	}
-
 	var res struct {
 		Experiment *Experiment `json:"experiment,omitempty"`
 	}
 
-	_, err := s.client.Do(ctx, "GET", "experiments/get", nil, &opts, &res)
+	params := url.Values{}
+	params.Set("experiment_id", id)
+
+	_, err := s.client.Do(ctx, "GET", "experiments/get", params, nil, &res)
 	if err != nil {
 		return nil, err
 	}
@@ -121,17 +121,14 @@ func (s *ExperimentService) Get(ctx context.Context, id string) (*Experiment, er
 }
 
 func (s *ExperimentService) GetByName(ctx context.Context, name string) (*Experiment, error) {
-	opts := struct {
-		ExperimentName string `json:"experiment_name,omitempty"`
-	}{
-		ExperimentName: name,
-	}
-
 	var res struct {
 		Experiment *Experiment `json:"experiment,omitempty"`
 	}
 
-	_, err := s.client.Do(ctx, "GET", "experiments/get-by-name", nil, &opts, &res)
+	params := url.Values{}
+	params.Set("experiment_name", name)
+
+	_, err := s.client.Do(ctx, "GET", "experiments/get-by-name", params, nil, &res)
 	if err != nil {
 		return nil, err
 	}
