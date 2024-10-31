@@ -50,6 +50,32 @@ func (s *UserService) Get(ctx context.Context, username string) (*User, error) {
 	return res.User, nil
 }
 
+func (s *UserService) UpdatePassword(ctx context.Context, username, password string) error {
+	opts := struct {
+		Username string `json:"username,omitempty"`
+		Password string `json:"password,omitempty"`
+	}{
+		Username: username,
+		Password: password,
+	}
+
+	_, err := s.client.Do(ctx, "PATCH", "users/update-password", nil, &opts, nil)
+	return err
+}
+
+func (s *UserService) UpdateAdmin(ctx context.Context, username string, isAdmin bool) error {
+	opts := struct {
+		Username string `json:"username,omitempty"`
+		IsAdmin  bool   `json:"is_admin,omitempty"`
+	}{
+		Username: username,
+		IsAdmin:  isAdmin,
+	}
+
+	_, err := s.client.Do(ctx, "PATCH", "users/update-admin", nil, &opts, nil)
+	return err
+}
+
 func (s *UserService) Delete(ctx context.Context, username string) error {
 	opts := struct {
 		Username string `json:"username,omitempty"`
