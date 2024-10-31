@@ -302,3 +302,16 @@ func (s *RunService) LogInputs(ctx context.Context, id string, datasets []*Datas
 	_, err := s.client.Do(ctx, "POST", "runs/log-inputs", nil, &opts, nil)
 	return err
 }
+
+func (s *RunService) LogModel(ctx context.Context, id, model string) error {
+	opts := struct {
+		RunID     string `json:"run_id,omitempty"`
+		ModelJson string `json:"model_json,omitempty"`
+	}{
+		RunID:     id,
+		ModelJson: model,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/log-model", nil, &opts, nil)
+	return err
+}
