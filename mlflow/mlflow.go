@@ -19,6 +19,7 @@ type Client struct {
 	// Services used for talking to different parts of the MLflow API.
 	Artifacts        *ArtifactsService
 	Experiments      *ExperimentService
+	LoggedModels     *LoggedModelService
 	Metrics          *MetricsService
 	ModelVersions    *ModelVersionService
 	RegisteredModels *RegisteredModelService
@@ -54,6 +55,7 @@ func NewClient(httpClient *http.Client, baseURL string) (*Client, error) {
 	c.common.client = c
 	c.Artifacts = (*ArtifactsService)(&c.common)
 	c.Experiments = (*ExperimentService)(&c.common)
+	c.LoggedModels = (*LoggedModelService)(&c.common)
 	c.Metrics = (*MetricsService)(&c.common)
 	c.ModelVersions = (*ModelVersionService)(&c.common)
 	c.RegisteredModels = (*RegisteredModelService)(&c.common)
