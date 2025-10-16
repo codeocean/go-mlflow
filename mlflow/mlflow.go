@@ -10,6 +10,10 @@ import (
 	"strings"
 )
 
+// Client manages communication with the MLflow API.
+//
+// Create a new Client using NewClient, then use the various services to access
+// different parts of the MLflow REST API.
 type Client struct {
 	client  *http.Client
 	baseURL *url.URL
@@ -17,20 +21,38 @@ type Client struct {
 	common service // Reuse a single struct instead of allocating one for each service on the heap.
 
 	// Services used for talking to different parts of the MLflow API.
-	Artifacts        *ArtifactsService
-	Experiments      *ExperimentService
-	LoggedModels     *LoggedModelService
-	Metrics          *MetricsService
-	ModelVersions    *ModelVersionService
+
+	// Artifacts provides access to artifact-related operations
+	Artifacts *ArtifactsService
+	// Experiments provides access to experiment-related operations
+	Experiments *ExperimentService
+	// LoggedModels provides access to logged model operations
+	LoggedModels *LoggedModelService
+	// Metrics provides access to metric-related operations
+	Metrics *MetricsService
+	// ModelVersions provides access to model version operations in the Model Registry
+	ModelVersions *ModelVersionService
+	// RegisteredModels provides access to registered model operations in the Model Registry
 	RegisteredModels *RegisteredModelService
-	Runs             *RunService
-	Users            *UserService
+	// Runs provides access to run-related operations
+	Runs *RunService
+	// Users provides access to user management operations
+	Users *UserService
 }
 
+// service is the base struct for all service types.
+//
+// It provides access to the client for making API calls.
 type service struct {
 	client *Client
 }
 
+// NewClient creates a new MLflow API client
+//
+// The baseURL should point to your MLflow tracking server (e.g., "http://localhost:5000").
+// If httpClient is nil, a default http.Client will be used.
+//
+// The client automatically appends "/api/2.0/mlflow/" to the base URL for API requests.
 func NewClient(httpClient *http.Client, baseURL string) (*Client, error) {
 	parsedURL, err := url.Parse(baseURL)
 	if err != nil {
@@ -65,6 +87,20 @@ func NewClient(httpClient *http.Client, baseURL string) (*Client, error) {
 	return c, nil
 }
 
+// Do sends an API request and returns the API response
+//
+// This is the core method that all service methods use to communicate with the MLflow API.
+// It handles request construction, error handling, and response parsing.
+//
+// Parameters:
+//   - ctx: Context for the request
+//   - method: HTTP method (GET, POST, PATCH, DELETE, etc.)
+//   - path: API endpoint path relative to the base URL
+//   - params: URL query parameters (can be nil)
+//   - body: Request body to be JSON-encoded (can be nil)
+//   - response: Pointer to struct for decoding the response (can be nil or io.Writer)
+//
+// Returns the raw http.Response and any error encountered.
 func (c *Client) Do(ctx context.Context, method string, path string, params url.Values, body interface{}, response interface{}) (*http.Response, error) {
 	u, err := c.baseURL.Parse(path)
 	if err != nil {
@@ -119,6 +155,9 @@ func (c *Client) Do(ctx context.Context, method string, path string, params url.
 	return res, err
 }
 
+// encodeBody encodes the request body as JSON
+//
+// Returns nil if body is nil, otherwise returns a reader containing the JSON-encoded body.
 func (c *Client) encodeBody(body interface{}) (io.Reader, error) {
 	if body == nil {
 		return nil, nil

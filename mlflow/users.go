@@ -5,14 +5,24 @@ import (
 	"net/url"
 )
 
+// UserService handles communication with the user management related methods of the MLflow API.
+//
+// Note: User management APIs are only available in MLflow installations with authentication enabled.
 type UserService service
 
+// User represents an MLflow user account
 type User struct {
-	ID       int    `json:"id,omitempty"`
+	// ID is the unique identifier for the user
+	ID int `json:"id,omitempty"`
+	// Username is the user's login name
 	Username string `json:"username,omitempty"`
-	IsAdmin  bool   `json:"is_admin,omitempty"`
+	// IsAdmin indicates whether the user has administrator privileges
+	IsAdmin bool `json:"is_admin,omitempty"`
 }
 
+// Create creates a new user account
+//
+// Requires administrator privileges.
 func (s *UserService) Create(ctx context.Context, username, password string) (*User, error) {
 	opts := struct {
 		Username string `json:"username,omitempty"`
@@ -34,6 +44,7 @@ func (s *UserService) Create(ctx context.Context, username, password string) (*U
 	return res.User, nil
 }
 
+// Get retrieves a user account by username
 func (s *UserService) Get(ctx context.Context, username string) (*User, error) {
 	var res struct {
 		User *User `json:"user,omitempty"`
@@ -50,6 +61,9 @@ func (s *UserService) Get(ctx context.Context, username string) (*User, error) {
 	return res.User, nil
 }
 
+// UpdatePassword changes a user's password
+//
+// Requires administrator privileges.
 func (s *UserService) UpdatePassword(ctx context.Context, username, password string) error {
 	opts := struct {
 		Username string `json:"username,omitempty"`
@@ -63,6 +77,9 @@ func (s *UserService) UpdatePassword(ctx context.Context, username, password str
 	return err
 }
 
+// UpdateAdmin updates a user's administrator privileges
+//
+// Requires administrator privileges.
 func (s *UserService) UpdateAdmin(ctx context.Context, username string, isAdmin bool) error {
 	opts := struct {
 		Username string `json:"username,omitempty"`
@@ -76,6 +93,9 @@ func (s *UserService) UpdateAdmin(ctx context.Context, username string, isAdmin 
 	return err
 }
 
+// Delete removes a user account
+//
+// Requires administrator privileges.
 func (s *UserService) Delete(ctx context.Context, username string) error {
 	opts := struct {
 		Username string `json:"username,omitempty"`

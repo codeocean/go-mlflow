@@ -5,21 +5,33 @@ import (
 	"net/url"
 )
 
+// Permission represents the level of access a user has to a resource
 type Permission string
 
 const (
-	PermissionRead          Permission = "READ"
-	PermissionEdit          Permission = "EDIT"
-	PermissionManage        Permission = "MANAGE"
+	// PermissionRead allows viewing the resource
+	PermissionRead Permission = "READ"
+	// PermissionEdit allows modifying the resource
+	PermissionEdit Permission = "EDIT"
+	// PermissionManage allows full control including permission management
+	PermissionManage Permission = "MANAGE"
+	// PermissionNoPermissions indicates no access
 	PermissionNoPermissions Permission = "NO_PERMISSIONS"
 )
 
+// ExperimentPermission represents a user's access level to an experiment
 type ExperimentPermission struct {
-	ExperimentID string     `json:"experiment_id"`
-	UserID       int        `json:"user_id"`
-	Permission   Permission `json:"permission"`
+	// ExperimentID is the unique identifier for the experiment
+	ExperimentID string `json:"experiment_id"`
+	// UserID is the unique identifier for the user
+	UserID int `json:"user_id"`
+	// Permission is the level of access granted
+	Permission Permission `json:"permission"`
 }
 
+// CreatePermission grants a user access to an experiment
+//
+// Requires MANAGE permission on the experiment.
 func (s *ExperimentService) CreatePermission(ctx context.Context, id, username string, permission Permission) (*ExperimentPermission, error) {
 	opts := struct {
 		ExperimentID string     `json:"experiment_id"`
@@ -43,6 +55,7 @@ func (s *ExperimentService) CreatePermission(ctx context.Context, id, username s
 	return res.ExperimentPermission, nil
 }
 
+// GetPermission retrieves a user's permission level for an experiment
 func (s *ExperimentService) GetPermission(ctx context.Context, id, username string) (*ExperimentPermission, error) {
 	var res struct {
 		ExperimentPermission *ExperimentPermission `json:"experiment_permission,omitempty"`
@@ -60,6 +73,9 @@ func (s *ExperimentService) GetPermission(ctx context.Context, id, username stri
 	return res.ExperimentPermission, nil
 }
 
+// UpdatePermission modifies a user's permission level for an experiment
+//
+// Requires MANAGE permission on the experiment.
 func (s *ExperimentService) UpdatePermission(ctx context.Context, id, username string, permission Permission) error {
 	opts := struct {
 		ExperimentID string     `json:"experiment_id"`
@@ -75,6 +91,9 @@ func (s *ExperimentService) UpdatePermission(ctx context.Context, id, username s
 	return err
 }
 
+// DeletePermission revokes a user's access to an experiment
+//
+// Requires MANAGE permission on the experiment.
 func (s *ExperimentService) DeletePermission(ctx context.Context, id, username string) error {
 	opts := struct {
 		ExperimentID string `json:"experiment_id"`
