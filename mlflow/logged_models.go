@@ -12,104 +12,165 @@ type LoggedModelService service
 type LoggedModelStatus string
 
 const (
-	LoggedModelStatusReady        LoggedModelStatus = "LOGGED_MODEL_READY"
-	LoggedModelStatusPending      LoggedModelStatus = "LOGGED_MODEL_PENDING_REGISTRATION"
-	LoggedModelStatusFailed       LoggedModelStatus = "LOGGED_MODEL_FAILED_REGISTRATION"
-	LoggedModelStatusPendingDel   LoggedModelStatus = "LOGGED_MODEL_PENDING_DELETION"
-	LoggedModelStatusDeleting     LoggedModelStatus = "LOGGED_MODEL_DELETING"
+	// LoggedModelStatusReady indicates the model is successfully logged and ready to use
+	LoggedModelStatusReady LoggedModelStatus = "LOGGED_MODEL_READY"
+	// LoggedModelStatusPending indicates the model is being registered
+	LoggedModelStatusPending LoggedModelStatus = "LOGGED_MODEL_PENDING_REGISTRATION"
+	// LoggedModelStatusFailed indicates the model registration failed
+	LoggedModelStatusFailed LoggedModelStatus = "LOGGED_MODEL_FAILED_REGISTRATION"
+	// LoggedModelStatusPendingDel indicates the model is pending deletion
+	LoggedModelStatusPendingDel LoggedModelStatus = "LOGGED_MODEL_PENDING_DELETION"
+	// LoggedModelStatusDeleting indicates the model is being deleted
+	LoggedModelStatusDeleting LoggedModelStatus = "LOGGED_MODEL_DELETING"
+	// LoggedModelStatusRegistration indicates the model registration is being finalized
 	LoggedModelStatusRegistration LoggedModelStatus = "LOGGED_MODEL_PENDING_FINALIZATION"
 )
 
 // LoggedModel represents a model logged to an MLflow Experiment
 type LoggedModel struct {
+	// Info contains metadata about the logged model
 	Info *LoggedModelInfo `json:"info,omitempty"`
+	// Data contains parameters and metrics associated with the model
 	Data *LoggedModelData `json:"data,omitempty"`
 }
 
 // LoggedModelInfo contains metadata about a logged model
 type LoggedModelInfo struct {
-	ModelID                string                         `json:"model_id,omitempty"`
-	ExperimentID           string                         `json:"experiment_id,omitempty"`
-	Name                   string                         `json:"name,omitempty"`
-	ArtifactUri            string                         `json:"artifact_uri,omitempty"`
-	CreationTimestampMs    int64                          `json:"creation_timestamp_ms,omitempty"`
-	LastUpdatedTimestampMs int64                          `json:"last_updated_timestamp_ms,omitempty"`
-	Status                 LoggedModelStatus              `json:"status,omitempty"`
-	StatusMessage          string                         `json:"status_message,omitempty"`
-	ModelType              string                         `json:"model_type,omitempty"`
-	SourceRunID            string                         `json:"source_run_id,omitempty"`
-	CreatorID              int64                          `json:"creator_id,omitempty"`
-	Tags                   []*LoggedModelTag              `json:"tags,omitempty"`
-	Registrations          []*LoggedModelRegistrationInfo `json:"registrations,omitempty"`
+	// ModelID is the unique identifier for the logged model
+	ModelID string `json:"model_id,omitempty"`
+	// ExperimentID is the ID of the experiment this model belongs to
+	ExperimentID string `json:"experiment_id,omitempty"`
+	// Name is the human-readable name of the model
+	Name string `json:"name,omitempty"`
+	// ArtifactUri is the URI where the model artifacts are stored
+	ArtifactUri string `json:"artifact_uri,omitempty"`
+	// CreationTimestampMs is when the model was created (Unix timestamp in milliseconds)
+	CreationTimestampMs int64 `json:"creation_timestamp_ms,omitempty"`
+	// LastUpdatedTimestampMs is when the model was last modified (Unix timestamp in milliseconds)
+	LastUpdatedTimestampMs int64 `json:"last_updated_timestamp_ms,omitempty"`
+	// Status is the current status of the model
+	Status LoggedModelStatus `json:"status,omitempty"`
+	// StatusMessage provides additional details about the status
+	StatusMessage string `json:"status_message,omitempty"`
+	// ModelType is the type/flavor of the model (e.g., "sklearn", "pytorch")
+	ModelType string `json:"model_type,omitempty"`
+	// SourceRunID is the ID of the run that produced this model
+	SourceRunID string `json:"source_run_id,omitempty"`
+	// CreatorID is the ID of the user who created the model
+	CreatorID int64 `json:"creator_id,omitempty"`
+	// Tags is the list of tags associated with this model
+	Tags []*LoggedModelTag `json:"tags,omitempty"`
+	// Registrations is the list of Model Registry registrations for this model
+	Registrations []*LoggedModelRegistrationInfo `json:"registrations,omitempty"`
 }
 
 // LoggedModelData contains data associated with a logged model
 type LoggedModelData struct {
-	Params  []*LoggedModelParameter `json:"params,omitempty"`
-	Metrics []*Metric               `json:"metrics,omitempty"`
+	// Params is the list of parameters associated with this model
+	Params []*LoggedModelParameter `json:"params,omitempty"`
+	// Metrics is the list of metrics recorded for this model
+	Metrics []*Metric `json:"metrics,omitempty"`
 }
 
 // LoggedModelTag represents a tag on a logged model
 type LoggedModelTag struct {
-	Key   string `json:"key,omitempty"`
+	// Key is the tag name
+	Key string `json:"key,omitempty"`
+	// Value is the tag value
 	Value string `json:"value,omitempty"`
 }
 
 // LoggedModelParameter represents a parameter of a logged model
 type LoggedModelParameter struct {
-	Key   string `json:"key,omitempty"`
+	// Key is the parameter name
+	Key string `json:"key,omitempty"`
+	// Value is the parameter value
 	Value string `json:"value,omitempty"`
 }
 
 // LoggedModelRegistrationInfo contains information about model registry registrations
 type LoggedModelRegistrationInfo struct {
-	Name    string `json:"name,omitempty"`
+	// Name is the name of the registered model
+	Name string `json:"name,omitempty"`
+	// Version is the version number of the registered model
 	Version string `json:"version,omitempty"`
 }
 
 // LoggedModelSearchOptions contains options for searching logged models
 type LoggedModelSearchOptions struct {
-	ExperimentIDs []string                    `json:"experiment_ids"`
-	Filter        string                      `json:"filter,omitempty"`
-	MaxResults    int32                       `json:"max_results,omitempty"`
-	OrderBy       []*LoggedModelOrderBy       `json:"order_by,omitempty"`
-	PageToken     string                      `json:"page_token,omitempty"`
-	Datasets      []*LoggedModelSearchDataset `json:"datasets,omitempty"`
+	// ExperimentIDs is the list of experiment IDs to search within (required)
+	ExperimentIDs []string `json:"experiment_ids"`
+	// Filter is a search filter expression (e.g., "name = 'my-model'")
+	Filter string `json:"filter,omitempty"`
+	// MaxResults is the maximum number of models to return
+	MaxResults int32 `json:"max_results,omitempty"`
+	// OrderBy specifies how to sort the results
+	OrderBy []*LoggedModelOrderBy `json:"order_by,omitempty"`
+	// PageToken is used for pagination to fetch the next page of results
+	PageToken string `json:"page_token,omitempty"`
+	// Datasets specifies datasets for filtering metrics
+	Datasets []*LoggedModelSearchDataset `json:"datasets,omitempty"`
 }
 
 // LoggedModelOrderBy specifies ordering for search results
 type LoggedModelOrderBy struct {
-	FieldName     string `json:"field_name"`
-	Ascending     bool   `json:"ascending,omitempty"`
-	DatasetName   string `json:"dataset_name,omitempty"`
+	// FieldName is the name of the field to sort by
+	FieldName string `json:"field_name"`
+	// Ascending indicates whether to sort in ascending order (true) or descending (false)
+	Ascending bool `json:"ascending,omitempty"`
+	// DatasetName is the name of the dataset when sorting by dataset-specific metrics
+	DatasetName string `json:"dataset_name,omitempty"`
+	// DatasetDigest is the digest of the dataset when sorting by dataset-specific metrics
 	DatasetDigest string `json:"dataset_digest,omitempty"`
 }
 
 // LoggedModelSearchDataset specifies a dataset for filtering metrics
 type LoggedModelSearchDataset struct {
-	DatasetName   string `json:"dataset_name"`
+	// DatasetName is the name of the dataset
+	DatasetName string `json:"dataset_name"`
+	// DatasetDigest is the digest/hash of the dataset for versioning
 	DatasetDigest string `json:"dataset_digest,omitempty"`
 }
 
 // LoggedModelSearchResults contains the results of a logged model search
 type LoggedModelSearchResults struct {
-	Models        []*LoggedModel `json:"models,omitempty"`
-	NextPageToken string         `json:"next_page_token,omitempty"`
+	// Models is the list of models matching the search criteria
+	Models []*LoggedModel `json:"models,omitempty"`
+	// NextPageToken is used to retrieve the next page of results (empty if no more results)
+	NextPageToken string `json:"next_page_token,omitempty"`
 }
 
 // LoggedModelArtifactList contains artifacts for a logged model
 type LoggedModelArtifactList struct {
-	RootURI       string      `json:"root_uri,omitempty"`
-	Files         []*FileInfo `json:"files,omitempty"`
-	NextPageToken string      `json:"next_page_token,omitempty"`
+	// RootURI is the root location for storing artifacts
+	RootURI string `json:"root_uri,omitempty"`
+	// Files is the list of artifact files and directories
+	Files []*FileInfo `json:"files,omitempty"`
+	// NextPageToken is used to retrieve the next page of results (empty if no more results)
+	NextPageToken string `json:"next_page_token,omitempty"`
+}
+
+// LoggedModelCreateOptions contains options for creating a logged model
+type LoggedModelCreateOptions struct {
+	// ExperimentID is the ID of the experiment to create the model in (required)
+	ExperimentID string `json:"experiment_id"`
+	// Name is the human-readable name for the model
+	Name string `json:"name,omitempty"`
+	// ModelType is the type/flavor of the model (e.g., "sklearn", "pytorch")
+	ModelType string `json:"model_type,omitempty"`
+	// SourceRunID is the ID of the run that produced this model
+	SourceRunID string `json:"source_run_id,omitempty"`
+	// Params is the list of initial parameters for the model
+	Params []*LoggedModelParameter `json:"params,omitempty"`
+	// Tags is the list of initial tags for the model
+	Tags []*LoggedModelTag `json:"tags,omitempty"`
 }
 
 // Create creates a new logged model
-func (s *LoggedModelService) Create(ctx context.Context, experimentID string, opts *LoggedModelCreateOptions) (*LoggedModel, error) {
-	if opts == nil {
-		opts = &LoggedModelCreateOptions{}
+func (s *LoggedModelService) Create(ctx context.Context, experimentID string) (*LoggedModel, error) {
+	opts := &LoggedModelCreateOptions{
+		ExperimentID: experimentID,
 	}
-	opts.ExperimentID = experimentID
 
 	var res struct {
 		Model *LoggedModel `json:"model,omitempty"`
@@ -121,16 +182,6 @@ func (s *LoggedModelService) Create(ctx context.Context, experimentID string, op
 	}
 
 	return res.Model, nil
-}
-
-// LoggedModelCreateOptions contains options for creating a logged model
-type LoggedModelCreateOptions struct {
-	ExperimentID string                  `json:"experiment_id"`
-	Name         string                  `json:"name,omitempty"`
-	ModelType    string                  `json:"model_type,omitempty"`
-	SourceRunID  string                  `json:"source_run_id,omitempty"`
-	Params       []*LoggedModelParameter `json:"params,omitempty"`
-	Tags         []*LoggedModelTag       `json:"tags,omitempty"`
 }
 
 // Get retrieves a logged model by ID
@@ -245,7 +296,7 @@ func (s *LoggedModelService) LogParams(ctx context.Context, modelID string, para
 }
 
 // ListArtifacts lists artifacts for a logged model
-func (s *LoggedModelService) ListArtifacts(ctx context.Context, modelID string, path string) (*LoggedModelArtifactList, error) {
+func (s *LoggedModelService) ListArtifacts(ctx context.Context, modelID, path string) (*LoggedModelArtifactList, error) {
 	params := url.Values{}
 	if path != "" {
 		params.Set("artifact_directory_path", path)
