@@ -27,9 +27,10 @@ const (
 )
 
 type Run struct {
-	Info   *RunInfo   `json:"info,omitempty"`
-	Data   *RunData   `json:"data,omitempty"`
-	Inputs *RunInputs `json:"inputs,omitempty"`
+	Info    *RunInfo    `json:"info,omitempty"`
+	Data    *RunData    `json:"data,omitempty"`
+	Inputs  *RunInputs  `json:"inputs,omitempty"`
+	Outputs *RunOutputs `json:"outputs,omitempty"`
 }
 
 type RunInfo struct {
@@ -68,6 +69,11 @@ type RunTag struct {
 
 type RunInputs struct {
 	DatasetInputs []*DatasetInput `json:"dataset_inputs,omitempty"`
+	ModelInputs   []*ModelInput   `json:"model_inputs,omitempty"`
+}
+
+type ModelInput struct {
+	ModelID string `json:"model_id,omitempty"`
 }
 
 type DatasetInput struct {
@@ -87,6 +93,15 @@ type Dataset struct {
 	Source     string `json:"source,omitempty"`
 	Schema     string `json:"schema,omitempty"`
 	Profile    string `json:"profile,omitempty"`
+}
+
+type RunOutputs struct {
+	ModelOutputs []*ModelOutput `json:"model_outputs,omitempty"`
+}
+
+type ModelOutput struct {
+	ModelID string `json:"model_id,omitempty"`
+	Step    int64  `json:"step,omitempty"`
 }
 
 type RunSearchOptions struct {
