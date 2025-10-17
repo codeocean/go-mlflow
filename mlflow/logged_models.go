@@ -6,6 +6,8 @@ import (
 	"net/url"
 )
 
+// LoggedModelService provides methods for interacting with logged models in MLflow experiments.
+// It enables operations such as retrieving, listing, and managing models that have been logged to the tracking server.
 type LoggedModelService service
 
 // LoggedModelStatus represents the status of a logged model
