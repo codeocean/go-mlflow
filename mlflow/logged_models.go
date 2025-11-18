@@ -293,6 +293,9 @@ func (s *LoggedModelService) DeleteTag(ctx context.Context, modelID, tagKey stri
 }
 
 // LogParams logs parameters to a logged model
+//
+// Note: To log metrics to a logged model, use the RunService.LogMetric methods with the
+// model_id parameter. Metrics are associated with runs, not logged directly to models.
 func (s *LoggedModelService) LogParams(ctx context.Context, modelID string, params map[string]string) error {
 	paramList := make([]*LoggedModelParameter, 0, len(params))
 	for key, value := range params {

@@ -89,6 +89,12 @@ type Metric struct {
 	Timestamp int64 `json:"timestamp,omitempty"`
 	// Step is the training step at which the metric was logged
 	Step int64 `json:"step,omitempty"`
+	// ModelID is the ID of the logged model this metric is associated with (optional)
+	ModelID string `json:"model_id,omitempty"`
+	// DatasetName is the name of the dataset this metric was evaluated on (optional)
+	DatasetName string `json:"dataset_name,omitempty"`
+	// DatasetDigest is the digest/hash of the dataset for versioning (optional)
+	DatasetDigest string `json:"dataset_digest,omitempty"`
 }
 
 // Param represents a key-value parameter logged to a run
@@ -381,19 +387,22 @@ func (s *RunService) DeleteTag(ctx context.Context, id, key string) error {
 //   - value: Metric value
 //   - timestamp: Time in milliseconds since epoch (0 uses current time)
 //   - step: Training step or iteration number
-func (s *RunService) LogMetric(ctx context.Context, id, key string, value float64, timestamp int64, step int64) error {
+//   - modelID: Optional model ID to associate the metric with a logged model
+func (s *RunService) LogMetric(ctx context.Context, id, key string, value float64, timestamp int64, step int64, modelID string) error {
 	opts := struct {
 		RunID     string  `json:"run_id,omitempty"`
 		Key       string  `json:"key,omitempty"`
 		Value     float64 `json:"value,omitempty"`
 		Timestamp int64   `json:"timestamp,omitempty"`
 		Step      int64   `json:"step,omitempty"`
+		ModelID   string  `json:"model_id,omitempty"`
 	}{
 		RunID:     id,
 		Key:       key,
 		Value:     value,
 		Timestamp: timestamp,
 		Step:      step,
+		ModelID:   modelID,
 	}
 
 	_, err := s.client.Do(ctx, "POST", "runs/log-metric", nil, &opts, nil)
