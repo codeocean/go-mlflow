@@ -320,7 +320,7 @@ func (s *LoggedModelService) Finalize(ctx context.Context, modelID string, statu
 		Model *LoggedModel `json:"model,omitempty"`
 	}
 
-	_, err := s.client.Do(ctx, "POST", "logged-models/finalize", nil, &opts, &res)
+	_, err := s.client.Do(ctx, "PATCH", fmt.Sprintf("logged-models/%s", modelID), nil, &opts, &res)
 	if err != nil {
 		return nil, err
 	}
