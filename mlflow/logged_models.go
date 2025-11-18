@@ -215,6 +215,28 @@ func (s *LoggedModelService) GetBatch(ctx context.Context, modelIDs []string) ([
 	return res.Models, nil
 }
 
+// Finalize finalizes a logged model with the given status
+func (s *LoggedModelService) Finalize(ctx context.Context, modelID string, status LoggedModelStatus) (*LoggedModel, error) {
+	opts := struct {
+		ModelID string            `json:"model_id"`
+		Status  LoggedModelStatus `json:"status"`
+	}{
+		ModelID: modelID,
+		Status:  status,
+	}
+
+	var res struct {
+		Model *LoggedModel `json:"model,omitempty"`
+	}
+
+	_, err := s.client.Do(ctx, "PATCH", fmt.Sprintf("logged-models/%s", modelID), nil, &opts, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Model, nil
+}
+
 // Delete deletes a logged model
 func (s *LoggedModelService) Delete(ctx context.Context, modelID string) error {
 	opts := struct {
@@ -304,26 +326,4 @@ func (s *LoggedModelService) ListArtifacts(ctx context.Context, modelID, path st
 	}
 
 	return &res, nil
-}
-
-// Finalize finalizes a logged model with the given status
-func (s *LoggedModelService) Finalize(ctx context.Context, modelID string, status LoggedModelStatus) (*LoggedModel, error) {
-	opts := struct {
-		ModelID string            `json:"model_id"`
-		Status  LoggedModelStatus `json:"status"`
-	}{
-		ModelID: modelID,
-		Status:  status,
-	}
-
-	var res struct {
-		Model *LoggedModel `json:"model,omitempty"`
-	}
-
-	_, err := s.client.Do(ctx, "PATCH", fmt.Sprintf("logged-models/%s", modelID), nil, &opts, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	return res.Model, nil
 }
