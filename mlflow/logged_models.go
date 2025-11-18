@@ -169,11 +169,7 @@ type LoggedModelCreateOptions struct {
 }
 
 // Create creates a new logged model
-func (s *LoggedModelService) Create(ctx context.Context, experimentID string) (*LoggedModel, error) {
-	opts := &LoggedModelCreateOptions{
-		ExperimentID: experimentID,
-	}
-
+func (s *LoggedModelService) Create(ctx context.Context, opts *LoggedModelCreateOptions) (*LoggedModel, error) {
 	var res struct {
 		Model *LoggedModel `json:"model,omitempty"`
 	}
@@ -233,10 +229,6 @@ func (s *LoggedModelService) Delete(ctx context.Context, modelID string) error {
 
 // Search searches for logged models matching the specified criteria
 func (s *LoggedModelService) Search(ctx context.Context, opts *LoggedModelSearchOptions) (*LoggedModelSearchResults, error) {
-	if opts == nil {
-		return nil, fmt.Errorf("search options are required")
-	}
-
 	var res LoggedModelSearchResults
 
 	_, err := s.client.Do(ctx, "POST", "logged-models/search", nil, opts, &res)
