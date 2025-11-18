@@ -462,6 +462,23 @@ func (s *RunService) LogInputs(ctx context.Context, id string, datasets []*Datas
 	return err
 }
 
+// LogOutputs logs model outputs produced by a run
+//
+// This tracks the models generated during the run's execution,
+// enabling model lineage and reproducibility.
+func (s *RunService) LogOutputs(ctx context.Context, id string, models []*ModelOutput) error {
+	opts := struct {
+		RunID  string         `json:"run_id,omitempty"`
+		Models []*ModelOutput `json:"models,omitempty"`
+	}{
+		RunID:  id,
+		Models: models,
+	}
+
+	_, err := s.client.Do(ctx, "POST", "runs/log-outputs", nil, &opts, nil)
+	return err
+}
+
 // LogModel logs a model artifact to a run (legacy method)
 //
 // This method records that a model was logged to the run. For MLflow 2.0+,
