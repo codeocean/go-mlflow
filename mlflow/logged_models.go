@@ -174,7 +174,7 @@ func (s *LoggedModelService) Create(ctx context.Context, opts *LoggedModelCreate
 		Model *LoggedModel `json:"model,omitempty"`
 	}
 
-	_, err := s.client.Do(ctx, "POST", "logged-models/create", nil, opts, &res)
+	_, err := s.client.Do(ctx, "POST", "logged-models", nil, opts, &res)
 	if err != nil {
 		return nil, err
 	}
