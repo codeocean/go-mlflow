@@ -475,7 +475,7 @@ func (s *RunService) LogOutputs(ctx context.Context, id string, models []*ModelO
 		Models: models,
 	}
 
-	_, err := s.client.Do(ctx, "POST", "runs/log-outputs", nil, &opts, nil)
+	_, err := s.client.Do(ctx, "POST", "runs/outputs", nil, &opts, nil)
 	return err
 }
 
