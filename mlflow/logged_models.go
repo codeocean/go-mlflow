@@ -169,16 +169,12 @@ type LoggedModelCreateOptions struct {
 }
 
 // Create creates a new logged model
-func (s *LoggedModelService) Create(ctx context.Context, experimentID string) (*LoggedModel, error) {
-	opts := &LoggedModelCreateOptions{
-		ExperimentID: experimentID,
-	}
-
+func (s *LoggedModelService) Create(ctx context.Context, opts *LoggedModelCreateOptions) (*LoggedModel, error) {
 	var res struct {
 		Model *LoggedModel `json:"model,omitempty"`
 	}
 
-	_, err := s.client.Do(ctx, "POST", "logged-models/create", nil, opts, &res)
+	_, err := s.client.Do(ctx, "POST", "logged-models", nil, opts, &res)
 	if err != nil {
 		return nil, err
 	}
@@ -219,6 +215,28 @@ func (s *LoggedModelService) GetBatch(ctx context.Context, modelIDs []string) ([
 	return res.Models, nil
 }
 
+// Finalize finalizes a logged model with the given status
+func (s *LoggedModelService) Finalize(ctx context.Context, modelID string, status LoggedModelStatus) (*LoggedModel, error) {
+	opts := struct {
+		ModelID string            `json:"model_id"`
+		Status  LoggedModelStatus `json:"status"`
+	}{
+		ModelID: modelID,
+		Status:  status,
+	}
+
+	var res struct {
+		Model *LoggedModel `json:"model,omitempty"`
+	}
+
+	_, err := s.client.Do(ctx, "PATCH", fmt.Sprintf("logged-models/%s", modelID), nil, &opts, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Model, nil
+}
+
 // Delete deletes a logged model
 func (s *LoggedModelService) Delete(ctx context.Context, modelID string) error {
 	opts := struct {
@@ -233,10 +251,6 @@ func (s *LoggedModelService) Delete(ctx context.Context, modelID string) error {
 
 // Search searches for logged models matching the specified criteria
 func (s *LoggedModelService) Search(ctx context.Context, opts *LoggedModelSearchOptions) (*LoggedModelSearchResults, error) {
-	if opts == nil {
-		return nil, fmt.Errorf("search options are required")
-	}
-
 	var res LoggedModelSearchResults
 
 	_, err := s.client.Do(ctx, "POST", "logged-models/search", nil, opts, &res)
@@ -279,6 +293,9 @@ func (s *LoggedModelService) DeleteTag(ctx context.Context, modelID, tagKey stri
 }
 
 // LogParams logs parameters to a logged model
+//
+// Note: To log metrics to a logged model, use the RunService.LogMetric methods with the
+// model_id parameter. Metrics are associated with runs, not logged directly to models.
 func (s *LoggedModelService) LogParams(ctx context.Context, modelID string, params map[string]string) error {
 	paramList := make([]*LoggedModelParameter, 0, len(params))
 	for key, value := range params {
@@ -312,26 +329,4 @@ func (s *LoggedModelService) ListArtifacts(ctx context.Context, modelID, path st
 	}
 
 	return &res, nil
-}
-
-// Finalize finalizes a logged model with the given status
-func (s *LoggedModelService) Finalize(ctx context.Context, modelID string, status LoggedModelStatus) (*LoggedModel, error) {
-	opts := struct {
-		ModelID string            `json:"model_id"`
-		Status  LoggedModelStatus `json:"status"`
-	}{
-		ModelID: modelID,
-		Status:  status,
-	}
-
-	var res struct {
-		Model *LoggedModel `json:"model,omitempty"`
-	}
-
-	_, err := s.client.Do(ctx, "POST", "logged-models/finalize", nil, &opts, &res)
-	if err != nil {
-		return nil, err
-	}
-
-	return res.Model, nil
 }
